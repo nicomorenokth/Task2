@@ -1,0 +1,132 @@
+CREATE TABLE "person"
+(
+  "person_id" serial PRIMARY KEY,
+  "personnr" varchar (12) UNIQUE,
+  "firstname" varchar (500),
+  "lastname" varchar (500),
+  "age" varchar (500),
+  "address" varchar (500)
+);
+
+CREATE TABLE "school"
+(
+  "school_id" serial PRIMARY KEY,
+  "city" varchar (500),
+  "zip" varchar(500) UNIQUE NOT NULL,
+  "street" varchar(500) UNIQUE NOT NULL, 
+ "person_id" int NOT NULL REFERENCES "person"
+);
+
+CREATE TABLE "student"
+(
+  "student_id" serial PRIMARY KEY,
+  "student_no" varchar (500) UNIQUE,
+  "person_id" int NOT NULL REFERENCES "person"
+);
+
+CREATE TABLE "instructor"
+(
+  "instructor_id" serial PRIMARY KEY,
+  "instructor_no" varchar (500) UNIQUE,
+  "person_id" int NOT NULL REFERENCES "person"
+);
+
+CREATE TABLE "instructor_payment"
+(
+  "instructor_payment_id" serial PRIMARY KEY,
+  "monthly_payments" varchar (500),
+  "student_fees" varchar (500),
+  "instructor_id" int NOT NULL REFERENCES "instructor" ON DELETE CASCADE
+);
+
+CREATE TABLE "student_payment"
+(
+  "student_payment_id" serial PRIMARY KEY,
+   "pricebeginner" varchar (500),
+   "priceintermediate" varchar (500),
+   "priceadvanced" varchar (500),
+   "priceindividuallesson" varchar (500),
+   "pricegrouplesson" varchar (500),
+   "student_id" int NOT NULL REFERENCES "student" ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE "discount"
+(
+  "discount_id" serial PRIMARY KEY,
+  "siblinglessondiscount" varchar (100),
+  "student_payment_id" int NOT NULL REFERENCES "student_payment" ON DELETE CASCADE
+);
+
+CREATE TABLE "email"
+(
+  "email_id" serial PRIMARY KEY,
+  "email_address" varchar (500) UNIQUE NOT NULL
+);
+
+CREATE TABLE "person_email"
+(
+  "email_id" int NOT NULL REFERENCES "email" ON DELETE CASCADE,
+  "person_id" int NOT NULL REFERENCES "person" ON DELETE CASCADE,
+  PRIMARY KEY("email_id", "person_id")
+);
+
+CREATE TABLE "phone_number"
+(
+  "phone_number_id" serial PRIMARY KEY,
+  "phone_no" varchar (500) UNIQUE NOT NULL
+);
+
+CREATE TABLE "person_phone_number"
+(
+ "person_id" int NOT NULL REFERENCES "person" ON DELETE CASCADE,
+ "phone_number_id" int NOT NULL REFERENCES "phone_number" ON DELETE CASCADE,
+  PRIMARY KEY("person_id", "phone_number_id")
+);
+
+CREATE TABLE "instrument_rental"
+(
+  "instrumental_id" serial PRIMARY KEY,
+  "instruments" varchar (500),
+  "wind" varchar (500),
+  "strings" varchar (500),
+  "brands" varchar (500),
+  "quantities" varchar (500)
+);
+
+CREATE TABLE "genres"
+(
+  "genre_id" serial PRIMARY KEY,
+  "punk_rock" varchar (500),
+  "gospel_band" varchar (500)
+);
+
+CREATE TABLE "skill_level"
+(
+  "skill_id" serial PRIMARY KEY,
+  "beginnerlevel" varchar (500) NOT NULL,
+  "intermediatelevel" varchar (500) NOT NULL,
+  "advancedlevel" varchar (500) NOT NULL 
+);
+
+CREATE TABLE "application"
+(
+  "application_id" serial PRIMARY KEY,
+ "instrument_specification" varchar (500) NOT NULL, 
+  "skill_specification" varchar (500) NOT NULL, 
+  "genre_specification" varchar (500) NOT NULL, 
+  "student_id" int NOT NULL REFERENCES "student",
+  "instrumental_id" int NOT NULL REFERENCES "instrument_rental", 
+  "genre_id" int NOT NULL REFERENCES "genres",
+  "skill_id" int NOT NULL REFERENCES "skill_level"
+);
+
+CREATE TABLE "lesson"
+(
+  "lesson_id" serial PRIMARY KEY,
+  "grouplesson" varchar (100),
+  "individuallesson" varchar (100),
+ "instructor_id" int NOT NULL REFERENCES "instructor",
+"application_id" NOT NULL REFERENCES "application"
+);
